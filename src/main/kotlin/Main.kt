@@ -1,36 +1,49 @@
-import java.util.*
+class Point(val x: Double, val y: Double)
+class Triangle(val vertex1: Point, val vertex2: Point, val vertex3: Point)
+class Circle(val center: Point, val radius: Double)
 
-fun main() {
-    val scanner = Scanner(System.`in`)
+fun Triangle.getInscribedCircle(): Circle {
+    // Вычисляем длины сторон треугольника
+    val side1 = Math.sqrt(Math.pow(vertex2.x - vertex1.x, 2.0) + Math.pow(vertex2.y - vertex1.y, 2.0))
+    val side2 = Math.sqrt(Math.pow(vertex3.x - vertex2.x, 2.0) + Math.pow(vertex3.y - vertex2.y, 2.0))
+    val side3 = Math.sqrt(Math.pow(vertex1.x - vertex3.x, 2.0) + Math.pow(vertex1.y - vertex3.y, 2.0))
+    // Вычисляем полупериметр треугольника
+    val semiperimeter = (side1 + side2 + side3) / 2
+    // Вычисляем радиус окружности
+    val radius = Math.sqrt((semiperimeter - side1) * (semiperimeter - side2) * (semiperimeter - side3) / semiperimeter)
+    // Вычисляем координаты центра окружности
 
-    println("Введите координаты вершин треугольника (x1, y1, x2, y2, x3, y3):")
-    val x1 = scanner.nextDouble()
-    val y1 = scanner.nextDouble()
-    val x2 = scanner.nextDouble()
-    val y2 = scanner.nextDouble()
-    val x3 = scanner.nextDouble()
-    val y3 = scanner.nextDouble()
-
-    println("Введите координаты точки (x, y):")
-    val x = scanner.nextDouble()
-    val y = scanner.nextDouble()
-
-    val isInside = isPointInsideTriangle(x, y, x1, y1, x2, y2, x3, y3)
-
-    if (isInside) {
-        println("Точка находится внутри треугольника")
-    } else {
-        println("Точка находится вне треугольника")
-    }
+    val centerX = (side2 * vertex1.x + side3 * vertex2.x + side1 * vertex3.x) / (side1 + side2 + side3)
+    val centerY = (side2 * vertex1.y + side3 * vertex2.y + side1 * vertex3.y) / (side1 + side2 + side3)
+    return Circle(Point(centerX, centerY), radius)
 }
 
-fun isPointInsideTriangle(x: Double, y: Double, x1: Double, y1: Double, x2: Double, y2: Double, x3:
-Double, y3: Double): Boolean {
-    val area = 0.5 * (-y2 * x3 + y1 * (-x2 + x3) + x1 * (y2 - y3) + x2 * y3)
-    val sign = if (area < 0) -1 else 1
+fun main() {
+    println("Введите координаты вершин треугольника:")
+    println("Введите координаты первой вершины:")
+    val x1 = readLine()?.toDoubleOrNull() ?: return
+    val y1 = readLine()?.toDoubleOrNull() ?: return
+    val vertex1 = Point(x1, y1)
 
-    val s = (y1 * x3 - x1 * y3 + (y3 - y1) * x + (x1 - x3) * y) * sign
-    val t = (x1 * y2 - y1 * x2 + (y1 - y2) * x + (x2 - x1) * y) * sign
+    println("Введите координаты второй вершины:")
+    val x2 = readLine()?.toDoubleOrNull() ?: return
+    val y2 = readLine()?.toDoubleOrNull() ?: return
+    val vertex2 = Point(x2, y2)
+
+    println("Введите координаты третьей вершины:")
+    val x3 = readLine()?.toDoubleOrNull() ?: return
+    val y3 = readLine()?.toDoubleOrNull() ?: return
+    val vertex3 = Point(x3, y3)
+
+// Создаем объект класса "Треугольник" с заданными вершинами
+    val triangle = Triangle(vertex1, vertex2, vertex3)
+
+    // Вычисляем вписанную окружность
+    val inscribedCircle = triangle.getInscribedCircle()
+
+    println("Координаты центра окружности: (${inscribedCircle.center.x}, ${inscribedCircle.center.y})")
+    println("Радиус окружности: ${inscribedCircle.radius}")
+}2 - x1) * y) * sign
 
     return s > 0 && t > 0 && s + t < 2 * area * sign
 }
